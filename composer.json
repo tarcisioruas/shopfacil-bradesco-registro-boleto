@@ -1,0 +1,29 @@
+{
+  "name": "tarcisioruas/bradesco-registro-online",
+  "license": "MIT",
+  "description": "Registro de Boletos via ShopFacil Bradesco",
+  "keywords": ["shopfacil", "registro" , "boleto" , "bradesco"],
+  "homepage": "https://github.com/tarcisioruas/shopfacil-registro-boleto",
+  "require": {
+    "php" : ">=5.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "@stable"
+  },
+  "autoload": {
+    "psr-0": {
+      "ShopFacil": "src"
+    },
+    "psr-4": {
+      "ShopFacil\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-0": {
+      "ShopFacil": "tests"
+    },
+    "psr-4": {
+      "ShopFacil\\": "src/"
+    }
+  }
+}
