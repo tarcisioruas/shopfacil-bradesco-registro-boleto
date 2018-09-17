@@ -14,6 +14,10 @@ class Boleto extends EntidadeAbstract
     private $aceite = BoletoAceiteEnum::NAO;
     private $especie = BoletoEspecieEnum::DIVERSOS;
     private $tipoEmissao = BoletoTipoEmissaoEnum::CEDENTE_EMITE;
+    private $percentualMulta;
+    private $percentualJuros;
+    private $valorDesconto;
+    private $dataDescontoAte;
     
 
     /**
@@ -96,6 +100,27 @@ class Boleto extends EntidadeAbstract
         return $this;
     }
 
+    public function setPercentualMulta($percentualMulta)
+    {
+        $this->percentualMulta = $percentualMulta;
+        return $this;
+    }
+
+    public function setPercentualJuros($percentualJuros)
+    {
+        $this->percentualJuros = $percentualJuros;
+        return $this;
+    }
+
+    public function setValorDesconto($valorDesconto) 
+    {
+        $this->valorDesconto = $valorDesconto;
+
+        if (empty($this->dataDescontoAte)) {
+            $this->dataDescontoAte = $this->dataVencimento;
+        }
+    }
+
     /**
      * Verifica se todos os dados obrigatórios foram informados
      * @return boolean true para dados ok e false para dados inconsistentes
@@ -121,6 +146,26 @@ class Boleto extends EntidadeAbstract
 
         if (empty($this->carteira) || (int)$this->carteira < 1) {
             $this->addInconsistencia('carteira', 'Carterira vazia ou inconsistente - Essa informação é obrigatória e deve ter valor inteiro maior do que 0');
+        }
+
+        if (!empty($this->percentualMulta) && (!is_numeric($this->percentualMulta) || $this->percentualMulta < 0)) {
+            $this->addInconsistencia('percentualMulta', 'Percentual de Multa deve ser um valor numérico válido e maior que 0');
+        }
+
+        if (!empty($this->percentualJuros) && (!is_numeric($this->percentualJuros)  || $this->percentualJuros < 0)) {
+            $this->addInconsistencia('percentualJuros', 'Percentual de Juros deve ser um valor numérico válido e maior que 0');
+        }
+        
+        if (!empty($this->valorDesconto)) {
+            if (!is_numeric($this->valorDesconto) || $this->valorDesconto < 0) {
+                $this->addInconsistencia('valorDesconto', 'Valor de Desconto deve ser um valor numérico válido e maior que 0'); 
+            }
+            
+            try {
+                $dataDescontoAte = DateTime::createFromFormat('Y-m-d', $this->dataDescontoAte);
+            } catch (\Exception $e) {
+                $this->addInconsistencia('dataDescontoAte', 'A data limite de desconto não corresponde ao formato válido "Y-m-d"'); 
+            }
         }
     }
 
