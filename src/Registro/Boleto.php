@@ -18,6 +18,8 @@ class Boleto extends EntidadeAbstract
     private $percentualJuros;
     private $valorDesconto;
     private $dataDescontoAte;
+    private $multaAPartirDeXDias = 1;
+    private $jurosAPartirDeXDias = 1;
     
 
     /**
@@ -28,7 +30,7 @@ class Boleto extends EntidadeAbstract
      * @param int $nossoNumero - Identificador a ser usado para geração do boleto
      * @return Boleto
      */
-    function __construct(Pessoa $pagador, $valorTitulo, $dataVencimento, $nossoNumero)
+    function __construct(EntidadeInterface $pagador, $valorTitulo, $dataVencimento, $nossoNumero)
     {
         $this->pagador = $pagador;
         $this->valorTitulo = $valorTitulo;
@@ -106,9 +108,21 @@ class Boleto extends EntidadeAbstract
         return $this;
     }
 
+    public function setMultaAPartirDeXDias($qtdDias)
+    {
+        $this->multaAPartirDeXDias = $qtdDias;
+        return $this;
+    }
+
     public function setPercentualJuros($percentualJuros)
     {
         $this->percentualJuros = $percentualJuros;
+        return $this;
+    }
+
+    public function setJurosAPartirDeXDias($qtdDias)
+    {
+        $this->jurosAPartirDeXDias = $qtdDias;
         return $this;
     }
 
@@ -190,6 +204,19 @@ class Boleto extends EntidadeAbstract
                 'tipo_emissao_papeleta' => $this->tipoEmissao,
             ]
         ];
+
+        if ($this->percentualMulta > 0) {
+            $boletoArray['informacoes_opcionais']['perc_multa_atraso'] = (int)number_format($this->percentualMulta, 5, '' , '');
+            $boletoArray['informacoes_opcionais']['valor_multa_atraso'] = (int)number_format($this->valorTitulo / 100 * $this->percentualMulta, 2, '' , '');
+            $boletoArray['informacoes_opcionais']['qtde_dias_multa_atraso'] = $this->multaAPartirDeXDias;
+        }
+
+        if ($this->percentualJuros > 0) {
+            $boletoArray['informacoes_opcionais']['perc_juros'] = (int)number_format($this->percentualJuros, 5, '' , '');
+            $boletoArray['informacoes_opcionais']['valor_juros'] = (int)number_format($this->valorTitulo / 100 * $this->percentualJuros, 2, '' , '');
+            $boletoArray['informacoes_opcionais']['qtde_dias_juros'] = $this->jurosAPartirDeXDias;
+        }
+
 
         return $boletoArray;
         

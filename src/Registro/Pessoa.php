@@ -4,15 +4,15 @@ namespace ShopFacil\Registro;
 class Pessoa extends EntidadeAbstract
 {
     private $nome;
-    private $cpf_cnpj;
-    private $tipo_documento;
-    private $endereco_cep;
-    private $endereco_logradouro;
-    private $endereco_numero;
-    private $endereco_complemento;
-    private $endereco_bairro;
-    private $endereco_cidade;
-    private $endereco_uf;     
+    private $cpfCnpj;
+    private $tipoDocumento;
+    private $enderecoCep;
+    private $enderecoLogradouro;
+    private $enderecoNumero;
+    private $enderecoComplemento;
+    private $enderecoBairro;
+    private $enderecoCidade;
+    private $enderecoUF;     
 
     const FISICA = 1;
     const JURIDICA = 2;
@@ -22,22 +22,22 @@ class Pessoa extends EntidadeAbstract
      * Intancia a classe Pessoa
      * @param String $nome - Nome da pessoa
      * @param String $cpf - CPF da pessoa
-     * @param int $tipo_documento - Tipo de Documento, 1 para CPF ou 2 para CNPJ
+     * @param int $tipoDocumento - Tipo de Documento, 1 para CPF ou 2 para CNPJ
      */
-    function __construct( $nome , $cpf_cnpj , $tipo_documento = self::FISICA )
+    function __construct($nome, $cpfCnpj, $tipoDocumento = self::FISICA)
     {
         $this->nome = $nome;
-        $this->cpf_cnpj = $cpf_cnpj;
-        $this->tipo_documento = $tipo_documento;
+        $this->cpfCnpj = $cpfCnpj;
+        $this->tipoDocumento = $tipoDocumento;
     }
 
     /**
      * Configura o cep do endereço
      * @param String $cep CEP do endereço. Ex: 08773000
      */
-    public function setEnderecoCEP( $cep )
+    public function setEnderecoCEP($cep)
     {
-        $this->endereco_cep = $cep;
+        $this->enderecoCep = $cep;
         return $this;
     }
 
@@ -46,9 +46,9 @@ class Pessoa extends EntidadeAbstract
      * @param String $logradouro - Logradouro do endereço
      * @return Pessoa
      */
-    public function setEnderecoLogradouro( $logradouro )
+    public function setEnderecoLogradouro($logradouro)
     {
-        $this->endereco_logradouro = $logradouro;
+        $this->enderecoLogradouro = $logradouro;
         return $this;
     }
 
@@ -56,9 +56,9 @@ class Pessoa extends EntidadeAbstract
      * Configura número do endereço
      * @param String $numero - Número do endereço
      */
-    public function setEnderecoNumero( $numero )
+    public function setEnderecoNumero($numero)
     {
-        $this->endereco_numero = $numero;
+        $this->enderecoNumero = $numero;
         return $this;
     }
 
@@ -66,9 +66,9 @@ class Pessoa extends EntidadeAbstract
      * Configura dados de complemento do endereço
      * @param String $complemento - Complemento do endereço
      */
-    public function setEnderecoComplemento( $complemento )
+    public function setEnderecoComplemento($complemento)
     {
-        $this->endereco_complemento = $complemento;
+        $this->enderecoComplemento = $complemento;
         return $this;
     }
 
@@ -76,9 +76,9 @@ class Pessoa extends EntidadeAbstract
      * Configura dados de bairro do endereço
      * @param String $bairro - Bairro do endereço
      */
-    public function setEnderecoBairro( $bairro )
+    public function setEnderecoBairro($bairro)
     {
-        $this->endereco_bairro = $bairro;
+        $this->enderecoBairro = $bairro;
         return $this;
     }
 
@@ -86,9 +86,9 @@ class Pessoa extends EntidadeAbstract
      * Configura dados de cidade do endereço
      * @param String $cidade - Cidade do endereço
      */
-    public function setEnderecoCidade( $cidade )
+    public function setEnderecoCidade($cidade)
     {
-        $this->endereco_cidade = $cidade;
+        $this->enderecoCidade = $cidade;
         return $this;
     }
 
@@ -96,9 +96,9 @@ class Pessoa extends EntidadeAbstract
      * Configura dados de uf do endereço
      * @param String $uf - UF do endereço
      */
-    public function setEnderecoUF( $uf )
+    public function setEnderecoUF($uf)
     {
-        $this->endereco_uf = $uf;
+        $this->enderecoUF = $uf;
         return $this;
     }
 
@@ -109,47 +109,54 @@ class Pessoa extends EntidadeAbstract
      */
     protected function verificaConsistencia()
     {
-        if( empty( $this->endereco_cep ) || strlen( $this->endereco_cep ) < 8 )
-            $this->addInconsistencia( 'endereco_cep', 'CEP vazio ou inconsistente - Essa informação é obrigatória');
+        if (empty($this->enderecoCep) || strlen($this->enderecoCep) < 8) {
+            $this->addInconsistencia( 'enderecoCep', 'CEP vazio ou inconsistente - Essa informação é obrigatória');
+        }
             
-        if( empty( $this->endereco_logradouro ) )
-            $this->addInconsistencia('endereco_logradouro' , 'Logradouro do endereço vazio - Essa informação é obrigatória');
+        if (empty($this->enderecoLogradouro)) {
+            $this->addInconsistencia('enderecoLogradouro' , 'Logradouro do endereço vazio - Essa informação é obrigatória');
+        }
+            
 
-        if( empty( $this->endereco_numero ) )
-            $this->addInconsistencia('endereco_numero' , 'Número do endereço vazio - Essa informação é obrigatória');
+        if (empty($this->enderecoNumero)) {
+            $this->addInconsistencia('enderecoNumero' , 'Número do endereço vazio - Essa informação é obrigatória');
+        }
+            
 
-        if( empty( $this->endereco_bairro ) )
-            $this->addInconsistencia('endereco_bairro' , 'Bairro do endereço vazio - Essa informação é obrigatória');
+        if (empty($this->enderecoBairro)) {
+            $this->addInconsistencia('enderecoBairro' , 'Bairro do endereço vazio - Essa informação é obrigatória');
+        }
+            
 
-        if( empty( $this->endereco_cidade ) )
-            $this->addInconsistencia('endereco_cidade' , 'Cidade do endereço vazia - Essa informação é obrigatória');
+        if (empty($this->enderecoCidade)) {
+            $this->addInconsistencia('enderecoCidade' , 'Cidade do endereço vazia - Essa informação é obrigatória');
+        }
+            
 
-        if( empty( $this->endereco_uf ) || strlen( $this->endereco_uf ) != 2 )
-            $this->addInconsistencia('endereco_uf' , 'UF do endereço vazio ou inconsistente - Essa informação é obrigatória');
+        if (empty($this->enderecoUF) || strlen($this->enderecoUF) != 2) {
+            $this->addInconsistencia('enderecoUF' , 'UF do endereço vazio ou inconsistente - Essa informação é obrigatória');
+        }
     }
 
     public function toArray()
     {
-    
-        if( $this->consistente() )
-        {
-            return [
-                'nome' => $this->nome,
-                'documento' => $this->cpf_cnpj,
-                'tipo_documento' => $this->tipo_documento,
-                'endereco' => [
-                    'cep' => $this->endereco_cep,
-                    'logradouro' => $this->endereco_logradouro,
-                    'numero' => $this->endereco_numero,
-                    'bairro' => $this->endereco_bairro,
-                    'cidade' => $this->endereco_cidade,
-                    'uf' => $this->endereco_uf
-                ]
-            ];
-        }
-        else
+        if(!$this->consistente()) {
             throw new EntidadeException("Há inconsistencias nos dados, use o método getInconsistencias() para verificar");
+        }
         
-        return [];
+        return [
+            'nome' => $this->nome,
+            'documento' => $this->cpfCnpj,
+            'tipo_documento' => $this->tipoDocumento,
+            'endereco' => [
+                'cep' => $this->enderecoCep,
+                'logradouro' => $this->enderecoLogradouro,
+                'numero' => $this->enderecoNumero,
+                'complemento' => $this->enderecoComplemento,
+                'bairro' => $this->enderecoBairro,
+                'cidade' => $this->enderecoCidade,
+                'uf' => $this->enderecoUF
+            ]
+        ];
     }
 }

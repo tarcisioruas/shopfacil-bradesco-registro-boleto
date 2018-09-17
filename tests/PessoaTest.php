@@ -40,7 +40,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de CEP retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_cep', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoCep', $this->pessoa->getInconsistencias());
     }
 
     public function testValidandoObrigatoriedadeDoLogradouro()
@@ -49,7 +49,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de Logradouro retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_logradouro', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoLogradouro', $this->pessoa->getInconsistencias());
     }
 
     public function testValidandoObrigatoriedadeDoNumero()
@@ -58,7 +58,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de numero retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_numero', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoNumero', $this->pessoa->getInconsistencias());
     }
 
     public function testValidandoObrigatoriedadeDoBairro()
@@ -67,7 +67,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de bairro retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_bairro', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoBairro', $this->pessoa->getInconsistencias());
     }
 
     public function testValidandoObrigatoriedadeDaCidade()
@@ -76,7 +76,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de cidade retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_cidade', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoCidade', $this->pessoa->getInconsistencias());
     }
 
     public function testValidandoObrigatoriedadeDaUf()
@@ -85,7 +85,7 @@ class PessoaTest extends TestCase
         $this->pessoa->consistente();
 
         //Verificando se o erro de cidade retorna quando ele nao é passado
-        $this->assertArrayHasKey('endereco_uf', $this->pessoa->getInconsistencias());
+        $this->assertArrayHasKey('enderecoUF', $this->pessoa->getInconsistencias());
     }
 
 
@@ -93,9 +93,10 @@ class PessoaTest extends TestCase
     {
         $this->pessoa->setEnderecoCEP('12345678')
                     ->setEnderecoLogradouro('Um Logradouro')
-                    ->setEnderecoNumero('123' )
+                    ->setEnderecoNumero('123')
                     ->setEnderecoBairro('Um Bairro')
                     ->setEnderecoCidade('São Paulo')
+                    ->setEnderecoComplemento('Bloco 10, Apto 444')
                     ->setEnderecoUF('SP');
 
         $arrayEsperado = [
@@ -106,6 +107,7 @@ class PessoaTest extends TestCase
                 'cep' => '12345678',
                 'logradouro' => 'Um Logradouro',
                 'numero' => '123',
+                'complemento' => 'Bloco 10, Apto 444',
                 'bairro' => 'Um Bairro',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP'
@@ -113,6 +115,16 @@ class PessoaTest extends TestCase
         ];
 
         $this->assertEquals($arrayEsperado, $this->pessoa->toArray());
+    }
+
+    /**
+     * @expectedException ShopFacil\Registro\EntidadeException
+     */
+    public function testValidandoExceptionEmSaidasInvalidas()
+    {
+        $this->pessoa->setEnderecoCEP('fasd')
+                    ->setEnderecoUF('SPF')
+                    ->toArray();
     }
 }
 ?>

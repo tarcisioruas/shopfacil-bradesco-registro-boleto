@@ -2,7 +2,6 @@
 use PHPUnit\Framework\TestCase;
 use ShopFacil\Registro\EntidadeInterface;
 use ShopFacil\Registro\Boleto;
-use ShopFacil\Registro\Pessoa;
 use ShopFacil\Registro\BoletoEspecieEnum;
 use ShopFacil\Registro\BoletoTipoEmissaoEnum;
 
@@ -12,15 +11,18 @@ class BoletoTest extends TestCase
     private $pessoa;
     private $boleto;
     private $dadosValidos;
+    private $valorBoleto;
 
     public function setUp()
     {
+        $this->valorBoleto = 200.45;
+
         $date = (new DateTime())
                 ->add(new DateInterval('P10D'))
                 ->format('Y-m-d');
 
-        $this->pessoa = $this->makePessoa();
-        $this->boleto = new Boleto($this->pessoa, 200.45, $date, 1234);
+        $this->pessoa = $this->mockPessoa();
+        $this->boleto = new Boleto($this->pessoa, $this->valorBoleto, $date, 1234);
         $this->dadosValidos = [
             'carteira' => 26, // Carteira usada pelo realtime
             'nosso_numero' => 1234,
@@ -149,15 +151,63 @@ class BoletoTest extends TestCase
         $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
     }
 
-    private function makePessoa()
+    public function testValidandoPercentualMulta()
     {
-        return (new Pessoa('Uma pessoa', '1234567890'))
-            ->setEnderecoCEP('12345678')
-            ->setEnderecoLogradouro('Um Logradouro')
-            ->setEnderecoNumero('123')
-            ->setEnderecoBairro('Um Bairro')
-            ->setEnderecoCidade('São Paulo')
-            ->setEnderecoUF('SP');
+        // Atribuindo multa de 2.15% ao boleto
+        $this->boleto->setPercentualMulta(2.15);
+
+        $this->dadosValidos['informacoes_opcionais']['perc_multa_atraso'] = 215000;
+        $this->dadosValidos['informacoes_opcionais']['valor_multa_atraso'] = 431;
+        $this->dadosValidos['informacoes_opcionais']['qtde_dias_multa_atraso'] = 1;
+        $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
+
+        $this->boleto->setMultaAPartirDeXDias(7);
+        $this->dadosValidos['informacoes_opcionais']['qtde_dias_multa_atraso'] = 7;
+        $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
+    }
+
+    public function testValidandoPercentualJuros()
+    {
+        // Atribuindo Juros de 1% ao boleto
+        $this->boleto->setPercentualJuros(1);
+
+        $this->dadosValidos['informacoes_opcionais']['perc_juros'] = 100000;
+        $this->dadosValidos['informacoes_opcionais']['valor_juros'] = 200;
+        $this->dadosValidos['informacoes_opcionais']['qtde_dias_juros'] = 1;
+        $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
+
+        $this->boleto->setJurosAPartirDeXDias(5);
+        $this->dadosValidos['informacoes_opcionais']['qtde_dias_juros'] = 5;
+        $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
+    }
+
+    private function mockPessoa()
+    {
+        $pessoa = $this->createMock(EntidadeInterface::class);
+
+        $pessoa->method('toArray')
+             ->willReturn([
+                'nome' => 'Uma Pessoa',
+                'documento' => '1234567890',
+                'tipo_documento' => 2,
+                'endereco' => [
+                    'cep' => '12345678',
+                    'logradouro' => 'Um Logradouro',
+                    'numero' => '123',
+                    'complemento' => 'Um Complemento',
+                    'bairro' => 'Um Bairro',
+                    'cidade' => 'Uma Cidade',
+                    'uf' => 'DF'
+                ]
+            ]);
+        
+            $pessoa->method('consistente')
+                ->willReturn(true);
+
+            $pessoa->method('getInconsistencias')
+                ->willReturn([]);
+            
+            return $pessoa;
     }
 
     private function makeBoletoInconsistente()
@@ -166,7 +216,7 @@ class BoletoTest extends TestCase
                 ->sub(new DateInterval('P10D'))
                 ->format('Y-m-d');
         
-        $boleto = new Boleto($this->makePessoa(), -150.40, $date, -1234);
+        $boleto = new Boleto($this->mockPessoa(), -150.40, $date, -1234);
         return $boleto->setCarteira(-2323);
     }
 }
