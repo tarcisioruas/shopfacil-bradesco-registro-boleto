@@ -15,9 +15,16 @@ install:
 - travis_retry composer self-update
 - travis_retry composer install --no-interaction --no-suggest
 
+addons:
+  sonarcloud:
+    organization: "tarcisioruas-github" # the key of the org you chose at step #3
+    token:
+      secure: "D35XTrA0ht3JKXtVHj3FxYSytn7ebtySMzRKkA+h+o6Y4P9pBjQXKYyOuK3LDjB5cpZUJUuPyqiVcnii3z8PYyD7jJLjl3/Lm4TlVDXRUmzkIogJTPClwgWyl4+SLVqTskqOSjptXYeXyAKTx1ZO0Nj9MmUJpX4Bei89kZ3prVNr01nbspTNMLY70MGFLEZ7lpBB9ECObWi4FgW5LTdTFlL4WmCg3YGtpk4Wmb8VG0AALw4sTN3snAze2LZcxZ1vvFDBRungu+KEo7K1hsIiSf6V4jeDSLv8AW/T0uGdKoCmd//6yOcc7eua0YRtzY6HPCKp5DE8SeKLRRkYh2BFydWI2gL2X3RKd0WT1iMsK0E1b9N8kThvXTab4qBAg8HTQ73aSDz2hh65bO5UpNjTyOu/l7Z7b7BkdCA+FC69npL+YknqeqUSr9GmqF6CVuU/oYqmq+T6f1x/kFA0gPL0FtGY2VAqDoFyMobFZ1qtyNZzUnw0wSz2UmC/EpyM2LKFLLM3k3J4QKsJq8hWdRbcpea5xEML/21ctZfXttbGQWgyxIfrqLXDhODwtGjwsv4OnMz/ZhdsROQ/+w1mEiqHlk3IMVVXdMlfiX5Z5mwxDm1F2Ti3f4Az+LbqTJLDVbZz0eOSLWMWKQnJjyidSpUiia9WBvAD2KEm52ThgOreb78="
+
 # Testing the app (see phpunit.xml) for configs, generating Code Coverage report
 script:
 - vendor/bin/phpunit --coverage-clover=coverage.xml
+- sonar-scanner
 
 #after_script:
 
