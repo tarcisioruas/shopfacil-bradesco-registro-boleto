@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use ShopFacil\Registro\EntidadeInterface;
+use ShopFacil\Registro\Interfaces\EntidadeInterface;
 use ShopFacil\Registro\Boleto;
 use ShopFacil\Registro\BoletoEspecieEnum;
 use ShopFacil\Registro\BoletoTipoEmissaoEnum;
@@ -12,23 +12,24 @@ class BoletoTest extends TestCase
     private $boleto;
     private $dadosValidos;
     private $valorBoleto;
+    private $dataVencimento;
 
     public function setUp()
     {
         $this->valorBoleto = 200.45;
 
-        $date = (new DateTime())
-                ->add(new DateInterval('P10D'))
+        $this->dataVencimento = (new \DateTime())
+                ->add(new \DateInterval('P10D'))
                 ->format('Y-m-d');
 
         $this->pessoa = $this->mockPessoa();
-        $this->boleto = new Boleto($this->pessoa, $this->valorBoleto, $date, 1234);
+        $this->boleto = new Boleto($this->pessoa, $this->valorBoleto, $this->dataVencimento, 1234);
         $this->dadosValidos = [
             'carteira' => 26, // Carteira usada pelo realtime
             'nosso_numero' => 1234,
             'numero_documento' => 1234,
             'data_emissao' => date('Y-m-d'),
-            'data_vencimento' => $date,
+            'data_vencimento' => $this->dataVencimento,
             'valor_titulo' => '20045', // Retira a pontuação e conserva até duas casas decimais
             'pagador' => $this->pessoa->toArray(), // Intuito não é testar a classe de pessoa
             'informacoes_opcionais' => [
@@ -54,7 +55,6 @@ class BoletoTest extends TestCase
 
     public function testValidandoComDadosConsistentes()
     {
-        $this->boleto->consistente();
         $this->assertEquals(true, $this->boleto->consistente());
     }
 
@@ -105,6 +105,76 @@ class BoletoTest extends TestCase
 
         // Verificando se o erro de numero documento
         $this->assertArrayHasKey('numeroDocumento', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeMultaValorNegativo()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setPercentualMulta(-5);
+        $boleto->consistente();
+
+        // Verificando erro percentual multa
+        $this->assertArrayHasKey('percentualMulta', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeMultaValorInvalido()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setPercentualMulta('Abcdef');
+        $boleto->consistente();
+
+        // Verificando erro percentual multa
+        $this->assertArrayHasKey('percentualMulta', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeJurosValorNegativo()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setPercentualJuros(-1);
+        $boleto->consistente();
+
+        // Verificando erro percentual juros
+        $this->assertArrayHasKey('percentualJuros', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeJurosValorInvalido()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setPercentualJuros('kii');
+        $boleto->consistente();
+
+        // Verificando erro percentual juros
+        $this->assertArrayHasKey('percentualJuros', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeDescontosValorNegativo()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setValorDesconto(-1);
+        $boleto->consistente();
+
+        // Verificando erro valor desconto
+        $this->assertArrayHasKey('valorDesconto', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeDescontosValorInvalido()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setValorDesconto('kii');
+        $boleto->consistente();
+
+        // Verificando erro valor desconto
+        $this->assertArrayHasKey('valorDesconto', $boleto->getInconsistencias());
+    }
+
+    public function testValidandoValidacaoDeDescontosDataInvalida()
+    {
+        $boleto = $this->makeBoletoInconsistente();
+        $boleto->setValorDesconto(50, 'umadatainvalida');
+        $boleto->consistente();
+
+        // Verificando erro data desconto ate
+        $this->assertArrayHasKey('dataDescontoAte', $boleto->getInconsistencias());
     }
 
     public function testValidandoArrayDeSaida()
@@ -181,6 +251,17 @@ class BoletoTest extends TestCase
         $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
     }
 
+    public function testValidandoDesconto()
+    {
+        // Atribuindo valor de descontos
+        $this->boleto->setValorDesconto(20.045);
+
+        $this->dadosValidos['informacoes_opcionais']['perc_desconto_1'] = 1000000;
+        $this->dadosValidos['informacoes_opcionais']['valor_desconto_1'] = 1000000;
+        $this->dadosValidos['informacoes_opcionais']['data_limite_desconto_1'] = $this->dataVencimento;
+        $this->assertEquals($this->dadosValidos, $this->boleto->toArray());
+    }
+
     private function mockPessoa()
     {
         $pessoa = $this->createMock(EntidadeInterface::class);
@@ -220,4 +301,3 @@ class BoletoTest extends TestCase
         return $boleto->setCarteira(-2323);
     }
 }
-?>

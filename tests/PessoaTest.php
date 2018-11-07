@@ -1,6 +1,6 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use ShopFacil\Registro\EntidadeInterface;
+use ShopFacil\Registro\Interfaces\EntidadeInterface;
 use ShopFacil\Registro\Pessoa;
 
 class PessoaTest extends TestCase
@@ -118,7 +118,7 @@ class PessoaTest extends TestCase
     }
 
     /**
-     * @expectedException ShopFacil\Registro\EntidadeException
+     * @expectedException ShopFacil\Registro\Exceptions\EntidadeException
      */
     public function testValidandoExceptionEmSaidasInvalidas()
     {
@@ -127,4 +127,3 @@ class PessoaTest extends TestCase
                     ->toArray();
     }
 }
-?>

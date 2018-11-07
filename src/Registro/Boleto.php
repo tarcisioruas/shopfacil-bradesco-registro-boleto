@@ -1,6 +1,8 @@
 <?php
 namespace ShopFacil\Registro;
 
+use ShopFacil\Registro\Interfaces\EntidadeInterface;
+
 class Boleto extends EntidadeAbstract
 {
     private $carteira = 26;
@@ -126,13 +128,16 @@ class Boleto extends EntidadeAbstract
         return $this;
     }
 
-    public function setValorDesconto($valorDesconto) 
+    public function setValorDesconto($valorDesconto, $dataDescontoAte = null) 
     {
         $this->valorDesconto = $valorDesconto;
+        $this->dataDescontoAte = $dataDescontoAte;
 
         if (empty($this->dataDescontoAte)) {
             $this->dataDescontoAte = $this->dataVencimento;
         }
+
+        return $this;
     }
 
     /**
@@ -176,7 +181,7 @@ class Boleto extends EntidadeAbstract
             }
             
             try {
-                $dataDescontoAte = DateTime::createFromFormat('Y-m-d', $this->dataDescontoAte);
+                $dataDescontoAte = new \DateTime($this->dataDescontoAte);
             } catch (\Exception $e) {
                 $this->addInconsistencia('dataDescontoAte', 'A data limite de desconto não corresponde ao formato válido "Y-m-d"'); 
             }
@@ -187,7 +192,7 @@ class Boleto extends EntidadeAbstract
      * Transforma dados encapsulados em um array formatado para ser enviado 
      * @return array
      */
-    public function toArray()
+    protected function _toArray()
     {
         $boletoArray =  [
             'carteira' => $this->carteira, // Carteira usada pelo realtime
@@ -217,8 +222,14 @@ class Boleto extends EntidadeAbstract
             $boletoArray['informacoes_opcionais']['qtde_dias_juros'] = $this->jurosAPartirDeXDias;
         }
 
+        if (!empty($this->valorDesconto) && $this->valorDesconto > 0)
+        {
+            $percentualDesconto = 100 / $this->valorTitulo * $this->valorDesconto;
+            $boletoArray['informacoes_opcionais']['perc_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
+            $boletoArray['informacoes_opcionais']['valor_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
+            $boletoArray['informacoes_opcionais']['data_limite_desconto_1'] =  $this->dataDescontoAte; 
+        }
 
         return $boletoArray;
-        
     }
 }

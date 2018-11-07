@@ -1,6 +1,8 @@
 <?php
 namespace ShopFacil\Registro;
 
+use ShopFacil\Registro\Exceptions\EntidadeException;
+
 class Pessoa extends EntidadeAbstract
 {
     private $nome;
@@ -138,12 +140,8 @@ class Pessoa extends EntidadeAbstract
         }
     }
 
-    public function toArray()
+    protected function _toArray()
     {
-        if(!$this->consistente()) {
-            throw new EntidadeException("Há inconsistencias nos dados, use o método getInconsistencias() para verificar");
-        }
-        
         return [
             'nome' => $this->nome,
             'documento' => $this->cpfCnpj,
