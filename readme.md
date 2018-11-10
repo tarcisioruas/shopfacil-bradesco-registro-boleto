@@ -7,7 +7,7 @@ Este SDK é designado à ajudar desenvolvedores PHP à integrar seus projetos co
 
 #### Instalação
 ```
-composer require "tarcisioruas/shopfacil-bradesco-registro-boleto"
+composer require tarcisioruas/bradesco-registro-online
 ```
 <details>
  <summary>Precisa de ajuda com a instalação?</summary>
@@ -23,7 +23,7 @@ php composer.phar install
 ```
 Após a instalação do composer, repita o comando de instalação do sdk abaixo:
 ```
-php composer.phar require "tarcisioruas/shopfacil-bradesco-registro-boleto"
+php composer.phar require tarcisioruas/bradesco-registro-online
 ```
 
 #### Windows:
