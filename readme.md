@@ -10,7 +10,7 @@ Este SDK é designado à ajudar desenvolvedores PHP à integrar seus projetos co
 composer require "tarcisioruas/shopfacil-bradesco-registro-boleto"
 ```
 <details>
- <summary>Precisa de ajuda com à instalação?</summary>
+ <summary>Precisa de ajuda com a instalação?</summary>
 
 ## Instale o Composer
 Se o comando de instalação acima não funcionar, instale o composer usando as instruções de instalação abaixo e tente novamente.
@@ -115,6 +115,7 @@ $codigoResposta = $retorno->getCodigoResposta();
 $mensagemResposta = $retorno->getMensagemResposta();
 
 echo $codigoRespostaHttp . ' - ' . $codigoResposta . ' - ' . $mensagemResposta . '<br />';
+```
 
 ### Desenvolvimento
 
