@@ -13,7 +13,7 @@ class RegistroTest extends TestCase
     
     public function setUp()
     {
-        $this->registro = new Registro($ambiente = Registro::HOMOLOGACAO, 'merchantId', 'senha', $this->mockHttp());
+        $this->registro = new Registro(Registro::HOMOLOGACAO, 'merchantId', 'senha', $this->mockHttp());
         $this->boleto = $this->mockBoleto();
     }
 
