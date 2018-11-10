@@ -121,4 +121,4 @@ echo $codigoRespostaHttp . ' - ' . $codigoResposta . ' - ' . $mensagemResposta .
 
 Quer contribuir? Ótimo!
 
-Se você encontrar um bug ou implemntou uma nova funcionalidade, sinta-se libre para nos enviar um pull request. Você será adicionado à lista de desenvolvedore automaticamente.
+Se encontrou e corrigiu um bug ou implementou uma nova funcionalidade, sinta-se à vontade para nos enviar um pull request. Você será adicionado à lista de desenvolvedores automaticamente.
