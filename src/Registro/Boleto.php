@@ -187,7 +187,12 @@ class Boleto extends EntidadeAbstract
             $this->dataDescontoAte = $this->dataVencimento;
         }
 
-        list($ano, $mes, $dia) = explode('-', $this->dataDescontoAte);
+        $arrayData = explode('-', $this->dataDescontoAte);
+        $ano = $mes = $dia = null;
+        if (count($arrayData) == 3) {
+            list($ano, $mes, $dia) = $arrayData;
+        }
+        
         $this->arrayConsistencia[Boleto::DATA_DESCONTO_ATE_FIELD] = checkdate((int)$mes, (int)$dia, (int)$ano);
         $this->arrayConsistencia[Boleto::VALOR_DESCONTO_FIELD] = !empty($this->valorDesconto) && is_numeric($this->valorDesconto) && (float)$this->valorDesconto >= 0;
 
