@@ -62,9 +62,6 @@ class Registro
             $mensagem = $resposta->status->mensagem;
         }
 
-        $retorno = new RetornoRegistro($requestInfo['http_code'], $codigo, $mensagem);
-
-        return $retorno;
-
+        return new RetornoRegistro($requestInfo['http_code'], $codigo, $mensagem);
     }
 }

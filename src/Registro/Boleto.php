@@ -22,7 +22,40 @@ class Boleto extends EntidadeAbstract
     private $dataDescontoAte;
     private $multaAPartirDeXDias = 1;
     private $jurosAPartirDeXDias = 1;
-    
+
+    const NOSSO_NUMERO_FIELD = 'nossoNumero';
+    const NUMERO_DOCUMENTO_FIELD = 'numeroDocumento';
+    const DATA_VENCIMENTO_FIELD = 'dataVencimento';
+    const VALOR_TITULO_FIELD = 'valorTitulo';
+    const CARTEIRA_FIELD = 'carteira';
+    const PERCENTUAL_MULTA_FIELD = 'percentualMulta';
+    const PERCENTUAL_JUROS_FIELD = 'percentualJuros';
+    const VALOR_DESCONTO_FIELD = 'valorDesconto';
+    const DATA_DESCONTO_ATE_FIELD = 'dataDescontoAte';
+
+    private $arrayConsistencia = [
+        Boleto::NOSSO_NUMERO_FIELD => false,
+        Boleto::NUMERO_DOCUMENTO_FIELD => false,
+        Boleto::DATA_VENCIMENTO_FIELD => false,
+        Boleto::VALOR_TITULO_FIELD => false,
+        Boleto::CARTEIRA_FIELD => true,
+        Boleto::PERCENTUAL_MULTA_FIELD => true,
+        Boleto::PERCENTUAL_JUROS_FIELD => true,
+        Boleto::VALOR_DESCONTO_FIELD => true,
+        Boleto::DATA_DESCONTO_ATE_FIELD => true,
+    ];
+
+    private $errosConsistencia = [
+        Boleto::NOSSO_NUMERO_FIELD => 'Nosso número vazio ou inconsistente - Essa informação é obrigatória e deve conter valor inteiro maior que 0',
+        Boleto::NUMERO_DOCUMENTO_FIELD => 'Número do Documento vazio ou inconsistente - Essa informação é obrigatória e deve conter valor inteiro maior que 0',
+        Boleto::DATA_VENCIMENTO_FIELD => 'Data de vencimento vazia ou inconsistente - Essa informação é obrigatória e deve ser maior ou igual a data atual',
+        Boleto::VALOR_TITULO_FIELD => 'Valor vazio ou inconsistente - Essa informação é obrigatória e deve ter valor maior do que 0',
+        Boleto::CARTEIRA_FIELD => 'Carterira vazia ou inconsistente - Essa informação é obrigatória e deve ter valor inteiro maior do que 0',
+        Boleto::PERCENTUAL_MULTA_FIELD => 'Percentual de Multa deve ser um valor numérico válido e maior que 0',
+        Boleto::PERCENTUAL_JUROS_FIELD => 'Percentual de Juros deve ser um valor numérico válido e maior que 0',
+        Boleto::VALOR_DESCONTO_FIELD => 'Valor de Desconto deve ser um valor numérico válido e maior que 0',
+        Boleto::DATA_DESCONTO_ATE_FIELD => 'A data limite de desconto não corresponde ao formato válido "Y-m-d"',
+    ];
 
     /**
      * Intancia a classe Boleto
@@ -41,6 +74,11 @@ class Boleto extends EntidadeAbstract
         $this->dataEmissao = date('Y-m-d');
         $this->numeroDocumento = $nossoNumero;
         $this->controleParticipante = $nossoNumero;
+
+        $this->arrayConsistencia[Boleto::NOSSO_NUMERO_FIELD] = !empty($this->nossoNumero) && (int)$this->nossoNumero > 0;
+        $this->arrayConsistencia[Boleto::NUMERO_DOCUMENTO_FIELD] = !empty($this->numeroDocumento) && (int)$this->numeroDocumento > 0;
+        $this->arrayConsistencia[Boleto::DATA_VENCIMENTO_FIELD] = !empty($this->dataVencimento) && str_replace('-', '', $this->dataVencimento) >= date('Ymd');
+        $this->arrayConsistencia[Boleto::VALOR_TITULO_FIELD] = !empty($this->valorTitulo) && (int)$this->valorTitulo >= 0;
     }
 
     /**
@@ -52,6 +90,9 @@ class Boleto extends EntidadeAbstract
     public function setNumeroDocumento($numeroDocumento)
     {
         $this->numeroDocumento = $numeroDocumento;
+
+        $this->arrayConsistencia[Boleto::NUMERO_DOCUMENTO_FIELD] = !empty($this->numeroDocumento) && (int)$this->numeroDocumento > 0;
+
         return $this;
     }
 
@@ -77,6 +118,9 @@ class Boleto extends EntidadeAbstract
     public function setCarteira($carteira)
     {
         $this->carteira = $carteira;
+        
+        $this->arrayConsistencia[Boleto::CARTEIRA_FIELD] = !empty($this->carteira) && (int)$this->carteira > 0;
+
         return $this;
     }
 
@@ -107,6 +151,9 @@ class Boleto extends EntidadeAbstract
     public function setPercentualMulta($percentualMulta)
     {
         $this->percentualMulta = $percentualMulta;
+
+        $this->arrayConsistencia[Boleto::PERCENTUAL_MULTA_FIELD] = !empty($this->percentualMulta) && is_numeric($this->percentualMulta) && (float)$this->percentualMulta >= 0;
+        
         return $this;
     }
 
@@ -119,6 +166,9 @@ class Boleto extends EntidadeAbstract
     public function setPercentualJuros($percentualJuros)
     {
         $this->percentualJuros = $percentualJuros;
+
+        $this->arrayConsistencia[Boleto::PERCENTUAL_JUROS_FIELD] = !empty($this->percentualJuros) && is_numeric($this->percentualJuros) && (float)$this->percentualJuros >= 0;
+
         return $this;
     }
 
@@ -137,6 +187,10 @@ class Boleto extends EntidadeAbstract
             $this->dataDescontoAte = $this->dataVencimento;
         }
 
+        list($ano, $mes, $dia) = explode('-', $this->dataDescontoAte);
+        $this->arrayConsistencia[Boleto::DATA_DESCONTO_ATE_FIELD] = checkdate((int)$mes, (int)$dia, (int)$ano);
+        $this->arrayConsistencia[Boleto::VALOR_DESCONTO_FIELD] = !empty($this->valorDesconto) && is_numeric($this->valorDesconto) && (float)$this->valorDesconto >= 0;
+
         return $this;
     }
 
@@ -147,43 +201,9 @@ class Boleto extends EntidadeAbstract
      */
     protected function verificaConsistencia()
     {
-        if (empty($this->nossoNumero) || (int)$this->nossoNumero < 1) {
-            $this->addInconsistencia('nossoNumero', 'Nosso número vazio ou inconsistente - Essa informação é obrigatória e deve conter valor inteiro maior que 0');
-        }
-
-        if (empty($this->numeroDocumento) || (int)$this->numeroDocumento < 1) {
-            $this->addInconsistencia('numeroDocumento', 'Número do Documento vazio ou inconsistente - Essa informação é obrigatória e deve conter valor inteiro maior que 0');
-        }
-
-        if (empty($this->dataVencimento) || str_replace('-', '', $this->dataVencimento) < date('Ymd')) {
-            $this->addInconsistencia('dataVencimento', 'Data de vencimento vazia ou inconsistente - Essa informação é obrigatória e deve ser maior ou igual a data atual');
-        }
-
-        if (empty($this->valorTitulo) || (float)$this->valorTitulo < 0) {
-            $this->addInconsistencia('valorTitulo', 'Valor vazio ou inconsistente - Essa informação é obrigatória e deve ter valor maior do que 0');
-        }
-
-        if (empty($this->carteira) || (int)$this->carteira < 1) {
-            $this->addInconsistencia('carteira', 'Carterira vazia ou inconsistente - Essa informação é obrigatória e deve ter valor inteiro maior do que 0');
-        }
-
-        if (!empty($this->percentualMulta) && (!is_numeric($this->percentualMulta) || $this->percentualMulta < 0)) {
-            $this->addInconsistencia('percentualMulta', 'Percentual de Multa deve ser um valor numérico válido e maior que 0');
-        }
-
-        if (!empty($this->percentualJuros) && (!is_numeric($this->percentualJuros)  || $this->percentualJuros < 0)) {
-            $this->addInconsistencia('percentualJuros', 'Percentual de Juros deve ser um valor numérico válido e maior que 0');
-        }
-        
-        if (!empty($this->valorDesconto)) {
-            if (!is_numeric($this->valorDesconto) || $this->valorDesconto < 0) {
-                $this->addInconsistencia('valorDesconto', 'Valor de Desconto deve ser um valor numérico válido e maior que 0'); 
-            }
-            
-            try {
-                $dataDescontoAte = new \DateTime($this->dataDescontoAte);
-            } catch (\Exception $e) {
-                $this->addInconsistencia('dataDescontoAte', 'A data limite de desconto não corresponde ao formato válido "Y-m-d"'); 
+        foreach ($this->arrayConsistencia as $campo => $isConsistente) {
+            if (!$isConsistente) {
+                $this->addInconsistencia($campo, $this->errosConsistencia[$campo]); 
             }
         }
     }
@@ -201,34 +221,37 @@ class Boleto extends EntidadeAbstract
             'data_emissao' => $this->dataEmissao,
             'data_vencimento' => substr($this->dataVencimento, 0 ,10),
             'valor_titulo' => str_replace(['.'], '' , number_format($this->valorTitulo, 2 )),
-            'pagador' => $this->pagador->toArray(),
-            'informacoes_opcionais' => [
-                'controle_participante' => $this->controleParticipante,
-                'especie' => $this->especie,
-                'aceite' => $this->aceite,
-                'tipo_emissao_papeleta' => $this->tipoEmissao,
-            ]
+            'pagador' => $this->pagador->toArray()
+        ];
+
+        $informacoesOpcionais = [
+            'controle_participante' => $this->controleParticipante,
+            'especie' => $this->especie,
+            'aceite' => $this->aceite,
+            'tipo_emissao_papeleta' => $this->tipoEmissao,
         ];
 
         if ($this->percentualMulta > 0) {
-            $boletoArray['informacoes_opcionais']['perc_multa_atraso'] = (int)number_format($this->percentualMulta, 5, '' , '');
-            $boletoArray['informacoes_opcionais']['valor_multa_atraso'] = (int)number_format($this->valorTitulo / 100 * $this->percentualMulta, 2, '' , '');
-            $boletoArray['informacoes_opcionais']['qtde_dias_multa_atraso'] = $this->multaAPartirDeXDias;
+            $informacoesOpcionais['perc_multa_atraso'] = (int)number_format($this->percentualMulta, 5, '' , '');
+            $informacoesOpcionais['valor_multa_atraso'] = (int)number_format($this->valorTitulo / 100 * $this->percentualMulta, 2, '' , '');
+            $informacoesOpcionais['qtde_dias_multa_atraso'] = $this->multaAPartirDeXDias;
         }
 
         if ($this->percentualJuros > 0) {
-            $boletoArray['informacoes_opcionais']['perc_juros'] = (int)number_format($this->percentualJuros, 5, '' , '');
-            $boletoArray['informacoes_opcionais']['valor_juros'] = (int)number_format($this->valorTitulo / 100 * $this->percentualJuros, 2, '' , '');
-            $boletoArray['informacoes_opcionais']['qtde_dias_juros'] = $this->jurosAPartirDeXDias;
+            $informacoesOpcionais['perc_juros'] = (int)number_format($this->percentualJuros, 5, '' , '');
+            $informacoesOpcionais['valor_juros'] = (int)number_format($this->valorTitulo / 100 * $this->percentualJuros, 2, '' , '');
+            $informacoesOpcionais['qtde_dias_juros'] = $this->jurosAPartirDeXDias;
         }
 
         if (!empty($this->valorDesconto) && $this->valorDesconto > 0)
         {
             $percentualDesconto = 100 / $this->valorTitulo * $this->valorDesconto;
-            $boletoArray['informacoes_opcionais']['perc_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
-            $boletoArray['informacoes_opcionais']['valor_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
-            $boletoArray['informacoes_opcionais']['data_limite_desconto_1'] =  $this->dataDescontoAte; 
+            $informacoesOpcionais['perc_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
+            $informacoesOpcionais['valor_desconto_1'] = (int)str_replace([ '.' , ',' ], '' , number_format((float)$percentualDesconto, 5));
+            $informacoesOpcionais['data_limite_desconto_1'] =  $this->dataDescontoAte; 
         }
+
+        $boletoArray['informacoes_opcionais'] = $informacoesOpcionais;
 
         return $boletoArray;
     }

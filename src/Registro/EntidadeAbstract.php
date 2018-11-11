@@ -41,8 +41,9 @@ abstract class EntidadeAbstract implements EntidadeInterface
     public function consistente()
     {
         $this->verificaConsistencia();
-        if(count($this->inconsistencias) > 0 )
+        if (count($this->inconsistencias) > 0 ) {
             return false;
+        }
         return true;
     }
 
