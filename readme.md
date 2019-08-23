@@ -66,7 +66,7 @@ $pagador->setEnderecoCEP('12345678')
 
 // Iniciando a configuração do boleto
 $valorDoBoleto = 150.30;
-$vencimento = '2019-12-24';
+$vencimento = '2020-12-24';
 $nossoNumero = 1234; //Indentificador do Boleto, pedido ou referencia interna do sistema
 $boleto = new Boleto($pagador, $valorDoBoleto, $vencimento, $nossoNumero);
 
