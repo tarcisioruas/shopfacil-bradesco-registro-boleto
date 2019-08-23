@@ -45,6 +45,8 @@ require 'vendor/autoload.php';
 use ShopFacil\Registro\Pessoa;
 use ShopFacil\Registro\Boleto;
 use ShopFacil\Registro\Registro;
+use ShopFacil\Registro\Exceptions\EntidadeException;
+use ShopFacil\Registro\Exceptions\HttpException;
 
 $nome = 'Nome de Uma Pessoa';
 $cpf = '1234567890';
@@ -64,7 +66,7 @@ $pagador->setEnderecoCEP('12345678')
 
 // Iniciando a configuração do boleto
 $valorDoBoleto = 150.30;
-$vencimento = '2018-12-24';
+$vencimento = '2019-12-24';
 $nossoNumero = 1234; //Indentificador do Boleto, pedido ou referencia interna do sistema
 $boleto = new Boleto($pagador, $valorDoBoleto, $vencimento, $nossoNumero);
 
@@ -78,7 +80,7 @@ $boleto->setPercentualJuros(0.033);
 // Definindo um desconto por antecipação, caso seja desejável
 // Atribuindo valor de descontos
 $descontoPorPagamentoAntecipado = 20.45;
-$dataLimiteDeDesconto = '2018-12-10';
+$dataLimiteDeDesconto = '2020-12-10';
 $boleto->setValorDesconto($descontoPorPagamentoAntecipado, $dataLimiteDeDesconto);
 
 // Requisitando o registro do boleto
@@ -93,6 +95,19 @@ $registro = new Registro($ambiente, $merchantId, $senha);
 try
 {
     $retorno = $registro->registrar($boleto);
+
+    // Verificando se o boleto foi registrado com sucesso
+    if ($retorno->registrado()) {
+        echo 'Boleto registrado com sucesso <br />';
+    }
+
+
+    // Mostrando código de retorno e mensagem
+    $codigoRespostaHttp = $retorno->getCodigoRespostaHttp();
+    $codigoResposta = $retorno->getCodigoResposta();
+    $mensagemResposta = $retorno->getMensagemResposta();
+
+    echo $codigoRespostaHttp . ' - ' . $codigoResposta . ' - ' . $mensagemResposta . '<br />';
 } 
 catch (EntidadeException $e) 
 {
@@ -102,19 +117,6 @@ catch (HttpException $e)
 {
     echo $e->getMessage();
 }
-
-// Verificando se o boleto foi registrado com sucesso
-if ($retorno->registrado()) {
-    echo 'Boleto registrado com sucesso <br />';
-}
-
-
-// Mostrando código de retorno e mensagem
-$codigoRespostaHttp = $retorno->getCodigoRespostaHttp();
-$codigoResposta = $retorno->getCodigoResposta();
-$mensagemResposta = $retorno->getMensagemResposta();
-
-echo $codigoRespostaHttp . ' - ' . $codigoResposta . ' - ' . $mensagemResposta . '<br />';
 ```
 
 ### Desenvolvimento
