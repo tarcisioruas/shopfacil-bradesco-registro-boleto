@@ -17,7 +17,7 @@ class RetornoRegistro
     public function registrado()
     {
         //Retorna 200, mas mesmo assim registra boleto
-        $registrados = [0, 930051, 930053];            
+        $registrados = [0, 930051, 930053, 93005999, 93005119];            
         if(($this->codigoRespostaHttp == 200 && in_array($this->codigoResposta , $registrados)) || $this->codigoRespostaHttp == 201)  {
             return true;
         }
