@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tarcisioruas/shopfacil-bradesco-registro-boleto.svg?branch=master)](https://travis-ci.org/tarcisioruas/shopfacil-bradesco-registro-boleto) [![Codecov](https://img.shields.io/codecov/c/github/tarcisioruas/shopfacil-bradesco-registro-boleto.svg)](https://codecov.io/gh/tarcisioruas/shopfacil-bradesco-registro-boleto)
+[![Build Status](https://travis-ci.org/tarcisioruas/shopfacil-bradesco-registro-boleto.svg?branch=master)](https://travis-ci.org/tarcisioruas/shopfacil-bradesco-registro-boleto) [![Codecov](https://codecov.io/gh/tarcisioruas/shopfacil-bradesco-registro-boleto/branch/master/graph/badge.svg)](https://codecov.io/gh/tarcisioruas/shopfacil-bradesco-registro-boleto)
 [![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=tarcisioruas_shopfacil-bradesco-registro-boleto&metric=alert_status)](https://sonarcloud.io/dashboard/index/tarcisioruas_shopfacil-bradesco-registro-boleto)
 
 # PHP ShopFacil Bradesco Registro de Boletos SDK
