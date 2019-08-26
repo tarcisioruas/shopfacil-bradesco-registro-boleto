@@ -17,7 +17,7 @@ class Registro
 
     function __construct($ambiente = SELF::HOMOLOGACAO, $merchantId = null, $senha = null, HttpInterface $http = null)
     {
-        $this->http = is_null($http) ? new Http() : $http;
+        $this->http = is_null($http) ? new CurlHttp() : $http;
         $this->ambiente = $ambiente;
         $this->merchantId = is_null($merchantId) ? getenv('SHOPFACIL_MERCHANT_ID') : $merchantId;
         $this->senha = is_null($senha) ? getenv('SHOPFACIL_SENHA') : $senha;
