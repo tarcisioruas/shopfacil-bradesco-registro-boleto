@@ -31,7 +31,7 @@ php composer.phar require tarcisioruas/bradesco-registro-online
 </details>
 
 #### Observações
-Essa lib usa o Guzzle 6.0 e por esses motivos algumas configurações ou versões de pacotes são necessárias. Veja abaixo:
+
 - Para usar com PHP stream wrapper, a opção allow_url_fopen precisa estar ativada dentro do php.ini do sistema
 - Para usar com cURL, a versão do cURL precisa ser maior ou igual que a 7.19.4, e deve estar complilada com OpenSSL e zlib
 
