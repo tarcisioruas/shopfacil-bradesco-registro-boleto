@@ -1,14 +1,14 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use ShopFacil\Registro\Http;
+use ShopFacil\Registro\CurlHttp;
 
-class HttpTest extends TestCase
+class CurlHttpTest extends TestCase
 {
     private $http;
 
     public function setUp()
     {
-        $this->http = new Http();
+        $this->http = new CurlHttp();
     }
     
     /**

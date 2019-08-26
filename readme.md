@@ -30,6 +30,12 @@ php composer.phar require tarcisioruas/bradesco-registro-online
 [Faça o download do Composer para Windows](https://getcomposer.org/doc/00-intro.md#installation-windows)
 </details>
 
+#### Observações
+Essa lib usa o Guzzle 6.0 e por esses motivos algumas configurações ou versões de pacotes são necessárias. Veja abaixo:
+- Para usar com PHP stream wrapper, a opção allow_url_fopen precisa estar ativada dentro do php.ini do sistema
+- Para usar com cURL, a versão do cURL precisa ser maior ou igual que a 7.19.4, e deve estar complilada com OpenSSL e zlib
+
+
 #### Como Usar
 ##### Configurações Preliminares
 
@@ -90,7 +96,13 @@ $senha = 'suaSenhaAqui';
 // Ou Registro::PRODUCAO
 $ambiente = Registro::HOMOLOGACAO;
 
+// Por padrão, o cURL será usado. 
 $registro = new Registro($ambiente, $merchantId, $senha);
+
+/* 
+* Se desejar usar com PHP Stream Wrapper, use como abaixo
+*/ 
+$registro = new Registro($ambiente, $merchantId, $senha, new ShopFacil\Registro\StreamHttp());
 
 try
 {
@@ -100,7 +112,6 @@ try
     if ($retorno->registrado()) {
         echo 'Boleto registrado com sucesso <br />';
     }
-
 
     // Mostrando código de retorno e mensagem
     $codigoRespostaHttp = $retorno->getCodigoRespostaHttp();

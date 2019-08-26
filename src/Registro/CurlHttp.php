@@ -4,11 +4,11 @@ namespace ShopFacil\Registro;
 use ShopFacil\Registro\Interfaces\HttpInterface;
 use ShopFacil\Registro\Exceptions\HttpException;
 
-class Http implements HttpInterface
+class CurlHttp implements HttpInterface
 {
     private $info = [];
     
-    public function post($url, $dados, $cabecalhos)
+    public function post($url, $dados, array $cabecalhos)
     {
         $canal = curl_init();
         curl_setopt($canal, CURLOPT_URL, $url);
