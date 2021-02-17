@@ -24,7 +24,7 @@ addons:
 
 # Testing the app (see phpunit.xml) for configs, generating Code Coverage report
 script:
-- vendor/bin/phpunit --coverage-clover=coverage.xml --log-junit phpunit.report.xml
+- vendor/bin/phpunit -c phpunit.xml.dist --coverage-clover=coverage-report.clover --log-junit test-report.xml
 - sonar-scanner
 
 #after_script:
