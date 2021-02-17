@@ -14,7 +14,7 @@ class StreamHttp implements HttpInterface
         $this->ativandoErroComoExcessao();
 
         $cabecalho = '';
-        if (is_array($cabecalhos) && count($cabecalhos) > 0) {
+        if (is_array($cabecalhos) && !empty($cabecalhos)) {
             foreach ($cabecalhos AS $valor) {
                 $cabecalho .= $valor . "\r\n"; 
             }
