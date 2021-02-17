@@ -9,7 +9,7 @@ php:
 - 7.1
 - 7.2
 - 7.3.24
-- 7.4
+- 7.4.0
 
 # Note: Code coverage requires php-xDebug extension enabled on CI server
 
