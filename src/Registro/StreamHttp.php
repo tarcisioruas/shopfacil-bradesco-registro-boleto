@@ -3,6 +3,7 @@ namespace ShopFacil\Registro;
 
 use ShopFacil\Registro\Interfaces\HttpInterface;
 use ShopFacil\Registro\Exceptions\HttpException;
+use ShopFacil\Registro\Excetpions\GenericErrorException;
 
 class StreamHttp implements HttpInterface
 {
@@ -14,7 +15,7 @@ class StreamHttp implements HttpInterface
 
         $cabecalho = '';
         if (is_array($cabecalhos) && count($cabecalhos) > 0) {
-            foreach ($cabecalhos AS $chave => $valor) {
+            foreach ($cabecalhos AS $valor) {
                 $cabecalho .= $valor . "\r\n"; 
             }
         } 
@@ -53,7 +54,7 @@ class StreamHttp implements HttpInterface
     private function ativandoErroComoExcessao() 
     {
         set_error_handler(function ($severity, $message, $file, $line) {
-            throw new \ErrorException($message, $severity, $severity, $file, $line);
+            throw new GenericErrorException($message, $severity, $severity, $file, $line);
         });
     }
 
