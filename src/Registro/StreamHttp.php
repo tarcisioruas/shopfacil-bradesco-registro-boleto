@@ -3,7 +3,7 @@ namespace ShopFacil\Registro;
 
 use ShopFacil\Registro\Interfaces\HttpInterface;
 use ShopFacil\Registro\Exceptions\HttpException;
-use ShopFacil\Registro\Excetpions\GenericErrorException;
+use ShopFacil\Registro\Exceptions\GenericErrorException;
 
 class StreamHttp implements HttpInterface
 {
